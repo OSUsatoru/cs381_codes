@@ -6,7 +6,17 @@ import HW1types
 
 
 -- Exercise 2: Graphs
+nodes :: Graph -> [Node]
+nodes [] = []
+nodes (x:xs) = norm([(fst x), (snd x)] ++ nodes(xs))
 
+suc :: Node -> Graph -> [Node]
+suc node [] = []
+suc node (x:xs)
+    | node == (fst x) = [snd x] ++ (suc node xs)
+    | otherwise = suc val xs
+
+cyc :: Int -> Graph
 
 
 
