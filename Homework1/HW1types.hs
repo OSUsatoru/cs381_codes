@@ -7,7 +7,6 @@ import Data.List (nub,sort)
 --
 type Bag a = [(a,Int)]
 
-
 -- Types and functions for Exercise 2
 --
 type Node  = Int
