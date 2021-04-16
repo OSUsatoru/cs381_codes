@@ -55,7 +55,17 @@ suc node (x:xs)
     | node == (fst x) = [snd x] ++ (suc node xs)
     | otherwise = suc val xs
 
+detach :: Node -> Graph -> Graph
+detach _ [] = []
+detach n (x:xs) == if fst x /= n && snd x /= n
+            then x : detach n xs
+            else detach n xs
+
 cyc :: Int -> Graph
+cyc n
+    | (n == 0) = []
+    | (n == 1) = []
+    | otherwise = zip [1..n] [2..n] ++ [(n, 1)]
 
 
 
