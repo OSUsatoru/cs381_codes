@@ -22,14 +22,14 @@ bag (x:xs) = ins x (bag xs)
 --(d) a < b
 bag_find :: Eq a => a -> Int -> Bag a -> Bool
 bag_find x xn [] = False
-bag_find x xn ((y,yn):ys) | x==y && xn <= yn = True
+bag_find x xn ((y,yn):ys) | x==y && yn >= xn = True
                           | x==y && xn > yn = False
                           | otherwise = bag_find x xn ys
 
 subbag :: Eq a => Bag a -> Bag a -> Bool
-subbag [] _  = False
-subbag ((x,n):xs) y | bag_find x n y = True
-                    | otherwise = subbag xs y
+subbag [] _  = True
+subbag ((x,n):xs) y | bag_find x n y = subbag xs y
+                    | otherwise = False
 
 -- (e)
 isSet :: Eq a => Bag a -> Bool
@@ -57,9 +57,9 @@ suc node (x:xs)
 
 detach :: Node -> Graph -> Graph
 detach _ [] = []
-detach n (x:xs) == if fst x /= n && snd x /= n
-            then x : detach n xs
-            else detach n xs
+detach n (x:xs)
+    | fst x /= n || snd x /= n = [x] ++ detach n xs
+    | otherwise = [] ++ detach n xs
 
 cyc :: Int -> Graph
 cyc n
