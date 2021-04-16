@@ -1,6 +1,6 @@
 import HW1types
 
--- Exercise 1: Lists
+-- Exercise 1: Lists (Satoru)
 
 -- (a)
 ins :: Eq a => a -> Bag a -> Bag a
@@ -44,7 +44,7 @@ size (_:xs) = 1+size xs
 
 
 
--- Exercise 2: Graphs
+-- Exercise 2: Graphs (Srikar and Alex)
 nodes :: Graph -> [Node]
 nodes [] = []
 nodes (x:xs) = norm([(fst x), (snd x)] ++ nodes(xs))
@@ -69,7 +69,7 @@ cyc n
 
 
 
--- Exercise 3: Data Types
+-- Exercise 3: Data Types (Lance)
 width :: Shape -> Length
 width (Pt _) = 0
 width (Circle _ rad) = rad * 2
