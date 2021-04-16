@@ -53,7 +53,7 @@ suc :: Node -> Graph -> [Node]
 suc node [] = []
 suc node (x:xs)
     | node == (fst x) = [snd x] ++ (suc node xs)
-    | otherwise = suc val xs
+    | otherwise = suc node xs
 
 detach :: Node -> Graph -> Graph
 detach _ [] = []
