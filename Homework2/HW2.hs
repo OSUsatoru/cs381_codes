@@ -22,18 +22,18 @@ data Vals = V (Int, [Int])
 
 -- 2b (Lance)
 vector = Def "vector" (P ("x1", ["x2", "y1", "y2"]))
-         (Seq (Pen Up) [Moveto (S "x1") (S "y1"),
-                        Pen Down,
-                        Moveto (S "x2") (S "y2"),
-                        Pen Up])
+        (Seq (Pen Up) [Moveto (S "x1") (S "y1"),
+                       Pen Down,
+                       Moveto (S "x2") (S "y2"),
+                       Pen Up])
 
 -- 3c (Lance)
 drawStep = Def "drawStep" (P ("x1", ["x2", "y1", "y2"]))
-           (Seq (Pen Up) [Moveto (S "x1") (S "y1"),
-                          Pen Down,
-                          Moveto (S "x2") (S "y1"),
-                          Moveto (S "x2") (S "y2"),
-                          Pen Up])
+          (Seq (Pen Up) [Moveto (S "x1") (S "y1"),
+                         Pen Down,
+                         Moveto (S "x2") (S "y1"),
+                         Moveto (S "x2") (S "y2"),
+                         Pen Up])
 
 steps :: Int -> Cmd
 steps 0 = Seq (Pen Up) [Moveto (N 0) (N 0),
@@ -57,14 +57,12 @@ data RegEx = Empty
            | Group RegEx
            deriving (Eq, Show)
 
---2b (satoru,  )
+--2b (Satoru,  )
 accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
-
-accept (Star e1) s = accept Empty s || or [accept e1 v && accept (Star e1) w | (v,w) <- splits s]
-accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
+accept (Seq2 e1 e2) w = or [accept e1 v && accept e2 w | (v,w) <- splits w]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
 
 
@@ -74,7 +72,7 @@ splits [x] = [([],[x]),([x],[])]
 splits (x:xs) = [([],x:xs)] ++ [(x:s,t) | (s,t) <- splits xs]
 
 
---2c (satoru,  )
+--2c (Satoru, Lance)
 
 classify :: RegEx -> [String] -> IO ()
 classify e ws = putStrLn ("ACCEPT:\n"++show acc++"\nREJECT:\n"++show rej)
@@ -84,14 +82,12 @@ classify e ws = putStrLn ("ACCEPT:\n"++show acc++"\nREJECT:\n"++show rej)
 commaSepTest = ["cat","cat,bat","cat,cat","bat","",",","dog",
                 ",cat","cat,","catcat","cat,,bat","cat,bat,"]
 
+commaSep :: RegEx
+commaSep = Or (Or cat bat) 
+              (Or (Or (Seq2 catComma bat) (Seq2 catComma cat))
+                  (Or (Seq2 batComma bat) (Seq2 batComma cat)))
 
-commaSep::RegEx
-commaSep = Or ( Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty))) (Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty)))
---commaSep =  Plus (Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty)))
-test::RegEx
-test =  Dot
-
--- classify test2 commaSepTest2
-commaSepTest2 = ["a", "aa", "aaa", "aaaa"]
-test2::RegEx
-test2 =  Star (Seq2 (C 'a') (C 'a'))
+cat = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') Empty)) 
+catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty))) 
+bat = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') Empty))
+batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
