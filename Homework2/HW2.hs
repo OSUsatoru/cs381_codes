@@ -62,7 +62,9 @@ accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
-accept (Seq2 e1 e2) w = or [accept e1 v && accept e2 w | (v,w) <- splits w]
+
+accept (Star e1) s = accept Empty s || or [accept e1 v && accept (Star e1) w | (v,w) <- splits s]
+accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
 
 
@@ -83,11 +85,11 @@ commaSepTest = ["cat","cat,bat","cat,cat","bat","",",","dog",
                 ",cat","cat,","catcat","cat,,bat","cat,bat,"]
 
 commaSep :: RegEx
-commaSep = Or (Or cat bat) 
+commaSep = Or (Or cat bat)
               (Or (Or (Seq2 catComma bat) (Seq2 catComma cat))
                   (Or (Seq2 batComma bat) (Seq2 batComma cat)))
 
-cat = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') Empty)) 
-catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty))) 
+cat = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') Empty))
+catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
 bat = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') Empty))
 batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
