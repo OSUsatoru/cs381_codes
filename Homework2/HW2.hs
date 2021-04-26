@@ -62,7 +62,9 @@ accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
-accept (Seq2 e1 e2) w = or [accept e1 v && accept e2 w | (v,w) <- splits w]
+
+accept (Star e1) s = accept Empty s || or [accept e1 v && accept (Star e1) w | (v,w) <- splits s]
+accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
 
 
@@ -82,11 +84,14 @@ classify e ws = putStrLn ("ACCEPT:\n"++show acc++"\nREJECT:\n"++show rej)
 commaSepTest = ["cat","cat,bat","cat,cat","bat","",",","dog",
                 ",cat","cat,","catcat","cat,,bat","cat,bat,"]
 
+
 commaSep::RegEx
 commaSep = Or ( Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty))) (Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty)))
-
+--commaSep =  Plus (Seq2 Dot (Seq2 (C 'a') (Seq2 (C 't') Empty)))
 test::RegEx
 test =  Dot
 
+-- classify test2 commaSepTest2
+commaSepTest2 = ["a", "aa", "aaa", "aaaa"]
 test2::RegEx
-test2 =  (C 'a')
+test2 =  Star (Seq2 (C 'a') (C 'a'))
