@@ -1,4 +1,4 @@
--- Exercise 1: Mini Logo (Lance)
+-- Exercise 1: Mini Logo
 
 -- 1a (Lance)
 data Cmd = Pen Mode
@@ -43,7 +43,7 @@ steps 0 = Seq (Pen Up) [Moveto (N 0) (N 0),
 steps n = Seq (Pen Up) [Call "drawStep" (V (n, [(n-1), n, (n-1)])), steps (n-1)]
 
 
--- Exercise 2: Regular Expressions (Lance)
+-- Exercise 2: Regular Expressions
 
 -- 2a (Lance)
 data RegEx = Empty
@@ -57,7 +57,7 @@ data RegEx = Empty
            | Group RegEx
            deriving (Eq, Show)
 
---2b (satoru)
+--2b (Satoru)
 accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot _ = True
@@ -70,7 +70,7 @@ splits [x] = [([],[x]),([x],[])]
 splits (x:xs) = [([],x:xs)] ++ [(x:s,t) | (s,t) <- splits xs]
 
 
---2c (satoru)
+--2c (Satoru)
 
 classify :: RegEx -> [String] -> IO ()
 classify e ws = putStrLn ("ACCEPT:\n"++show acc++"\nREJECT:\n"++show rej)
