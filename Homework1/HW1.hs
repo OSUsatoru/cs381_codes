@@ -40,7 +40,7 @@ isSet ((x,n):xs) | not(n==1) = False
 -- (f)
 size :: Bag a -> Int
 size [] = 0
-size (_:xs) = 1+size xs
+size ((x,n):xs) = n+size xs
 
 
 
