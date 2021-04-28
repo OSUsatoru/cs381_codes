@@ -62,34 +62,24 @@ accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
-accept (Group x) s = accept x s
 
+-- accept (Question e1) (x:xs)
+--     | e1 == Empty = accept Empty [x] 
+--     | otherwise = accept (Question e1) xs
 
 accept (Plus e1) [] = False
 accept (Plus e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
 accept (Star e1) []
-    | e1 == Empty = True
-    | otherwise = False
-accept (Star e1) (x:xs) = (accept e1 [x]) || (accept (Star e1) xs)
+    | e1 /= Empty = False
+    | otherwise = accept (Star e1) []
 
--- accept (Star e1) (x:xs) 
---     | e1 == (C x) = accept (C x) (x:xs)
---     | e1 == Dot = accept Dot [x]
---     | otherwise = accept (Plus e1) xs
+accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Star e1) xs)
 
+accept (Group x) s = accept x s
 
-
--- accept (Star e1) (x:xs) 
---     | (accept e1 x)y
---     | otherwise = (accept e1 xs)
-
--- accept (Star e1) s = accept Empty s || or [accept e1 v && accept (Star e1) w | (v,w) <- splits s]
 accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
-
-
-
 
 splits :: [a] -> [([a],[a])]
 splits [] = []
