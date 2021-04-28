@@ -62,10 +62,7 @@ accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
-
-accept (Question e1) (x:xs)
-     | e1 == Empty = accept Empty [x] 
-     | otherwise = accept (Question e1) xs
+accept (Question e1) s = accept Empty s || accept e1 s
 
 accept (Star e1) [] = True
 accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
@@ -96,8 +93,8 @@ commaSepTest = ["cat","cat,bat","cat,cat","bat","",",","dog",
 
 commaSep :: RegEx
 commaSep = Or (Or cat bat)
-              (Or (Or (Seq2 catComma bat) (Seq2 catComma cat))
-                  (Or (Seq2 batComma bat) (Seq2 batComma cat)))
+              (Or (Or (Seq2 (Plus catComma) bat) (Seq2 (Plus catComma) cat))
+                  (Or (Seq2 (Plus batComma) bat) (Seq2 (Plus batComma) cat)))
 
 cat = Seq2 (C 'c') (Seq2 (C 'a') (C 't'))
 catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
