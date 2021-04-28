@@ -70,11 +70,8 @@ accept (C x) w = [x] == w
 accept (Plus e1) [] = False
 accept (Plus e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
-accept (Star e1) []
-    | e1 /= Empty = False
-    | otherwise = accept (Star e1) []
-
-accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Star e1) xs)
+accept (Star e1) [] = True
+accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
 accept (Group x) s = accept x s
 
