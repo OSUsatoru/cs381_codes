@@ -57,26 +57,26 @@ data RegEx = Empty
            | Group RegEx
            deriving (Eq, Show)
 
---2b (Satoru, Srikar, Alex)
+--2b (Satoru, Srikar, Alex, Lance)
 accept :: RegEx -> String -> Bool
 accept Empty w = w == ""
 accept Dot w = (length w) == 1
 accept (C x) w = [x] == w
 
--- accept (Question e1) (x:xs)
---     | e1 == Empty = accept Empty [x] 
---     | otherwise = accept (Question e1) xs
-
-accept (Plus e1) [] = False
-accept (Plus e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
+accept (Question e1) (x:xs)
+     | e1 == Empty = accept Empty [x] 
+     | otherwise = accept (Question e1) xs
 
 accept (Star e1) [] = True
 accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
-accept (Group x) s = accept x s
+accept (Plus e1) [] = False
+accept (Plus e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
 accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
+accept (Group x) s = accept x s
+
 
 splits :: [a] -> [([a],[a])]
 splits [] = []
@@ -99,7 +99,7 @@ commaSep = Or (Or cat bat)
               (Or (Or (Seq2 catComma bat) (Seq2 catComma cat))
                   (Or (Seq2 batComma bat) (Seq2 batComma cat)))
 
-cat = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') Empty))
-catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
-bat = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') Empty))
-batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
+cat = Seq2 (C 'c') (Seq2 (C 'a') (C 't'))
+catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
+bat = Seq2 (C 'b') (Seq2 (C 'a') (C 't'))
+batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
