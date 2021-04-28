@@ -70,6 +70,7 @@ accept (Star e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 accept (Plus e1) [] = False
 accept (Plus e1) (x:xs) = (accept e1 (x:xs)) || (accept (Plus e1) xs)
 
+accept (Seq2 (Question e1) (Question e2)) [] = True
 accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
 accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
 accept (Group x) s = accept x s
