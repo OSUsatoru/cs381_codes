@@ -59,14 +59,43 @@ data RegEx = Empty
 
 --2b (Satoru, Srikar, Alex)
 accept :: RegEx -> String -> Bool
-accept Empty s = s == ""
-accept Dot s = (length s) == 1
-accept (C x) s = [x] == s
-accept (Question x) s = s == s
+accept Empty w = w == ""
+accept Dot w = (length w) == 1
+accept (C x) w = [x] == w
+
+-- accept (Question e1) (x:xs) = accept Empty x || accept Dot x || accept (C x) (x:xs)
+
+accept (Question e1) []
+    | e1 == Empty = accept Empty []
+accept (Question e1) (x:xs) 
+    | e1 == (C x) = accept (C x) (x:xs)
+    | e1 == Dot = accept Dot (x:xs)
+    | otherwise = accept (Question e1) xs
+
+accept (Plus e1) []
+    | e1 == Empty = accept Empty []
+accept (Plus e1) (x:xs) 
+    | e1 == (C x) = accept (C x) [x]
+    | e1 == Dot = accept Dot [x]
+    | otherwise = accept (Plus e1) xs
+
+-- accept (Star e1) (x:xs) 
+--     | e1 == (C x) = accept (C x) (x:xs)
+--     | e1 == Dot = accept Dot [x]
+--     | otherwise = accept (Plus e1) xs
+
+
+
+-- accept (Star e1) (x:xs) 
+--     | (accept e1 x)y
+--     | otherwise = (accept e1 xs)
+
 accept (Star e1) s = accept Empty s || or [accept e1 v && accept (Star e1) w | (v,w) <- splits s]
-accept (Plus x) s = s == s
 accept (Seq2 e1 e2) s = or [accept e1 v && accept e2 w | (v,w) <- splits s]
-accept (Or e1 e2) s = (accept e1 s) || (accept e2 s)
+accept (Or e1 e2) w = (accept e1 w) || (accept e2 w)
+
+
+
 
 splits :: [a] -> [([a],[a])]
 splits [] = []
@@ -89,7 +118,7 @@ commaSep = Or (Or cat bat)
               (Or (Or (Seq2 catComma bat) (Seq2 catComma cat))
                   (Or (Seq2 batComma bat) (Seq2 batComma cat)))
 
-cat = Seq2 (C 'c') (Seq2 (C 'a') (C 't'))
-catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
-bat = Seq2 (C 'b') (Seq2 (C 'a') (C 't'))
-batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
+cat = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') Empty))
+catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
+bat = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') Empty))
+batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (Seq2 (C ',') Empty)))
