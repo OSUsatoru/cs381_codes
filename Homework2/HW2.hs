@@ -92,11 +92,7 @@ commaSepTest = ["cat","cat,bat","cat,cat","bat","",",","dog",
                 ",cat","cat,","catcat","cat,,bat","cat,bat,"]
 
 commaSep :: RegEx
-commaSep = Or (Or cat bat)
-              (Or (Or (Seq2 (Plus catComma) bat) (Seq2 (Plus catComma) cat))
-                  (Or (Seq2 (Plus batComma) bat) (Seq2 (Plus batComma) cat)))
+commaSep = Seq2 (Star (catorbatComma)) (catorbat)
 
-cat = Seq2 (C 'c') (Seq2 (C 'a') (C 't'))
-catComma = Seq2 (C 'c') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
-bat = Seq2 (C 'b') (Seq2 (C 'a') (C 't'))
-batComma = Seq2 (C 'b') (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
+catorbat = Seq2 (Or (C 'c') (C 'b')) (Seq2 (C 'a') (C 't'))
+catorbatComma = Seq2 (Or (C 'c') (C 'b')) (Seq2 (C 'a') (Seq2 (C 't') (C ',')))
