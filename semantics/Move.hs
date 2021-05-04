@@ -1,12 +1,12 @@
--- 
+--
 -- Semantics of move language
--- 
+--
 module Move where
 
 
 -- (1) Syntax of move language
 --
-data Dir  = Lft | Rgt | Up | Dwn  
+data Dir  = Lft | Rgt | Up | Dwn
             deriving Show
             -- note: Left and Right are already defined
 
@@ -25,7 +25,7 @@ type Pos = (Int,Int)
 --
 sem :: Move -> Pos
 sem []  = (0,0)
-sem (Go d i:ss) = (dx*i+x,dy*i+y) 
+sem (Go d i:ss) = (dx*i+x,dy*i+y)
                   where (x,y)   = sem ss
                         (dx,dy) = vector d
 
@@ -37,7 +37,7 @@ vector Dwn = (0,-1)
 
 
 -- examples
--- 
+--
 m :: Move
 m = [Go Up 3,Go Rgt 4,Go Dwn 1]
 
