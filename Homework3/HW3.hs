@@ -41,3 +41,30 @@ evalD x = case (stackLength x) of
 run :: Prog -> Stack
 run p = sem p []
 
+-- Exercise 2: Mini Logo (Lance)
+
+data Cmd' = Pen Mode
+          | MoveTo Int Int
+          | Seq Cmd' Cmd'
+            deriving Show
+
+data Mode   = Up | Down
+              deriving Show
+
+type State  = (Mode,Int,Int)
+
+type Line   = (Int,Int,Int,Int)
+type Lines  = [Line]
+
+semS :: Cmd' -> State -> (State,Lines)
+semS (Pen Up)         (_,x,y)     = ((Up,x,y),[]) 
+semS (Pen Down)       (_,x,y)     = ((Down,x,y),[]) 
+semS (MoveTo a b)     (Up,_,_)    = ((Up,a,b),[])
+semS (MoveTo a b)     (Down,x,y)  = ((Down,a,b),[(x,y,a,b)])
+semS (Seq cmd1 cmd2)  state1      = (state3, lines1 ++ lines2)
+                                    where (state2, lines1) = semS cmd1 state1
+                                          (state3, lines2) = semS cmd2 state2
+
+sem' :: Cmd' -> Lines
+sem' cmd = snd (semS cmd (Up, 0, 0))
+
