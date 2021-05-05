@@ -17,11 +17,11 @@ type D = Stack -> Stack
 
 semCmd :: Cmd -> D
 semCmd (LD i) stack = [i] ++ stack 
-semCmd ADD stack = (stack!!0 + stack!!1):tail(tail stack)
-semCmd MULT stack = (stack!!0 * stack!!1):tail(tail stack)
-semCmd DUP stack = (stack!!0):stack
+semCmd ADD stack = (head(stack) + stack!!1):tail(tail stack)
+semCmd MULT stack = (head(stack) * stack!!1):tail(tail stack)
+semCmd DUP stack = (head(stack)):stack
 
 sem :: Prog -> D
-sem (x:xs) stack = semCmd x stackUpdated
-                   where stackUpdated = sem xs stack
+sem [] stack = stack
+sem (x:xs) stack = sem xs (semCmd x stack)
 
