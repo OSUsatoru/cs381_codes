@@ -13,9 +13,9 @@ type D = Stack -> Stack
 
 semCmd :: Cmd -> D
 semCmd (LD i) stack = [i] ++ stack
-semCmd ADD stack = (head(evalS stack) + (evalS stack)!!1):tail(tail (evalS stack))
-semCmd MULT stack = (head(evalS stack) * (evalS stack)!!1):tail(tail (evalS stack))
-semCmd DUP stack = (head(evalD stack)):(evalD stack)
+semCmd ADD stack = (head(evalS ADD stack) + (stack)!!1):tail(tail stack)
+semCmd MULT stack = (head(evalS MULT stack) * (stack)!!1):tail(tail stack)
+semCmd DUP stack = (head(evalD stack)):stack
 
 sem :: Prog -> D
 sem [] stack = stack
@@ -25,17 +25,20 @@ stackLength :: [Int] -> Int
 stackLength [] = 0
 stackLength (x:xs) = 1 + stackLength xs
 
-evalS :: Stack -> Stack
-evalS x = case (stackLength x) of
+evalS :: Cmd -> Stack -> Stack
+evalS ADD x = case (stackLength x) of
                 len -> if len > 1 then x
-                       else error("There are less than 2 elements in the stack.")
+                       else error("Expression ADD: There are less than 2 elements in the stack.")
+evalS MULT x = case (stackLength x) of
+                len -> if len > 1 then x
+                       else error("Expression MULT: There are less than 2 elements in the stack.")
 
 --evalS x = if (stackLength x) > 1 then x else error("There are less than 2 elements in the stack.")
 
 evalD :: Stack -> Stack
 evalD x = case (stackLength x) of
                 len -> if len > 0 then x
-                       else error("Expression DUP There are less than 1 elements in the stack.")
+                       else error("Expression DUP: There are less than 1 elements in the stack.")
 --evalD x = if (stackLength x) > 0 then x else error("There are no elements in the stack to be duplicated.")
 
 run :: Prog -> Stack
@@ -57,8 +60,8 @@ type Line   = (Int,Int,Int,Int)
 type Lines  = [Line]
 
 semS :: Cmd' -> State -> (State,Lines)
-semS (Pen Up)         (_,x,y)     = ((Up,x,y),[]) 
-semS (Pen Down)       (_,x,y)     = ((Down,x,y),[]) 
+semS (Pen Up)         (_,x,y)     = ((Up,x,y),[])
+semS (Pen Down)       (_,x,y)     = ((Down,x,y),[])
 semS (MoveTo a b)     (Up,_,_)    = ((Up,a,b),[])
 semS (MoveTo a b)     (Down,x,y)  = ((Down,a,b),[(x,y,a,b)])
 semS (Seq cmd1 cmd2)  state1      = (state3, lines1 ++ lines2)
