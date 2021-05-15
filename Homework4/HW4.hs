@@ -49,3 +49,5 @@ semCmd MULT   (v1:v2:vs) = (v1*v2:vs)
 sem :: Prog -> Stack -> Stack
 sem []     s = s
 sem (c:cs) s = sem cs (semCmd c s)
+
+--2
