@@ -23,6 +23,7 @@ rankC (POP x) = (x,0)
 
 --Rank = fst element - scd element
 rank :: Prog -> Rank -> Maybe Rank
+rank [] r = Just r
 rank (x:xs) r | r >= n = rank xs (r-n+m)
               | otherwise = Nothing
                 where (n,m) = rankC x
