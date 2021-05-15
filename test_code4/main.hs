@@ -29,10 +29,13 @@ t = Node 6 l (Node 9 Leaf (Node 8 Leaf Leaf))
 
 find :: Int -> Tree -> Bool
 find _ Leaf = False
+find i (Node j l r) = i==j || find i l|| find i r
+
+{-
 find i (Node j l r) | i==j = True
                     | i<j = find i l
                     | True = find i r
-
+-}
 minT :: Tree -> Int
 minT (Node x Leaf _) = x
 minT (Node _ t _) = minT t
