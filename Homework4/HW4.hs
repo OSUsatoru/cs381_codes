@@ -45,9 +45,10 @@ semCmd (LD i) (s)          = (i:s)
 semCmd DUP    (vs@(v:_))   = (v:vs)
 semCmd ADD    (v1:v2:vs)   = (v1+v2:vs)
 semCmd MULT   (v1:v2:vs)   = (v1*v2:vs)
-semCmd DEC    (v:vs)       = (v-1,vs)
+semCmd DEC    (v:vs)       = (v-1):vs
 semCmd SWAP   (v1:v2:vs)   = (v2:v1:vs)
-semCmd (POP x) s           =
+semCmd (POP x) s@(v:vs)    | x > 0 = semCmd (POP (x-1)) vs
+                           | x == 0 = s
 
 sem :: Prog -> Stack -> Stack
 sem []     s = s
