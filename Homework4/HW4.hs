@@ -41,11 +41,13 @@ rankP x = rank x 0
 -- rankP does error checking already so sem's
 -- type and definition can be simplified like so:
 
--- sem :: Prog -> Stack -> Stack
+-- type D = Stack -> Stack
+
+-- sem :: Prog -> D
 -- sem []     s = s
 -- sem (c:cs) s = sem cs (semCmd c s)
 
--- semCmd :: Cmd -> Stack -> Stack
+-- semCmd :: Cmd -> D
 -- semCmd (LD x)   s           = (x:s)
 -- semCmd DUP     (vs@(v:_))   = (v:vs)
 -- semCmd ADD     (v1:v2:vs)   = (v1+v2:vs)
@@ -53,20 +55,6 @@ rankP x = rank x 0
 -- semCmd DEC     (v:vs)       = (v-1:vs)
 -- semCmd SWAP    (v1:v2:vs)   = (v2:v1:vs)
 -- semCmd (POP x)  s           = drop x s
-
-sem :: Prog -> Maybe Stack -> Maybe Stack
-sem []     s = s
-sem (c:cs) s = sem cs (semCmd c s)
-
-semCmd :: Cmd -> Maybe Stack -> Maybe Stack
-semCmd (LD x)  (Just s)          = Just (x:s)
-semCmd DUP     (Just vs@(v:_))   = Just (v:vs)
-semCmd ADD     (Just (v1:v2:vs)) = Just (v1+v2:vs)
-semCmd MULT    (Just (v1:v2:vs)) = Just (v1*v2:vs)
-semCmd DEC     (Just (v:vs))     = Just (v-1:vs)
-semCmd SWAP    (Just (v1:v2:vs)) = Just (v2:v1:vs)
-semCmd (POP x) (Just s)          = Just (drop x s)
-semCmd _       _                 = Nothing
 
 -- Exercise 2. Shape Language (Srikar, Alex)
 
