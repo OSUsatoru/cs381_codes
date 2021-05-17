@@ -12,12 +12,11 @@ data Cmd = LD Int
          | POP Int
          deriving Show
 
---(a)
 type Rank = Int
 type CmdRank = (Int,Int)
 
 rankC :: Cmd -> CmdRank
-rankC (LD x) = (0,1)
+rankC (LD _) = (0,1)
 rankC (ADD) = (2,1)
 rankC (MULT) = (2,1)
 rankC (DUP) = (1,2)
@@ -35,10 +34,9 @@ rankP :: Prog -> Maybe Rank
 rankP [] = Just 0
 rankP x = rank x 0
 
---(b)
 -- semStatTC :: Prog -> Maybe Stack
 -- semStatTC x | rankP x /= Nothing = Just(sem x [])
---             | otherwise = Nothing
+--             | otherwise = Nothing 
 
 -- rankP does error checking already so sem's
 -- type and definition can be simplified like so:
@@ -70,4 +68,17 @@ semCmd SWAP    (Just (v1:v2:vs)) = Just (v2:v1:vs)
 semCmd (POP x) (Just s)          = Just (drop x s)
 semCmd _       _                 = Nothing
 
--- Exercise 2. Shape Language
+-- Exercise 2. Shape Language (Srikar, Alex)
+
+data Shape = X 
+           | TD Shape Shape
+           | LR Shape Shape
+           deriving Show
+
+type BBox = (Int,Int)
+
+bbox :: Shape -> BBox
+bbox X = (1,1)
+
+rect :: Shape -> Maybe BBox
+rect X = Just (1,1)
