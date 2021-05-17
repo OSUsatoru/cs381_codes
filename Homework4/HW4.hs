@@ -54,4 +54,15 @@ sem :: Prog -> Stack -> Stack
 sem []     s = s
 sem (c:cs) s = sem cs (semCmd c s)
 
---2
+--2 a
+
+data Shape = X
+           | TD Shape Shape
+           | LR Shape Shape
+           deriving Show
+
+type BBox = (Int,Int)
+
+bbox :: Shape -> BBox
+bbox (TD x y)
+bbox (LR x y)
