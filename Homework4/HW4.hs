@@ -1,9 +1,5 @@
 -- Exercise 1. A Rank-Based Type System for the Stack Language (Satoru, Lance)
 
-import Data.List
-import Data.Ord
-
-
 type Prog = [Cmd]
 type Stack = [Int]
 
@@ -60,7 +56,7 @@ rankP x = rank x 0
 -- semCmd SWAP    (v1:v2:vs)   = (v2:v1:vs)
 -- semCmd (POP x)  s           = drop x s
 
--- Exercise 2. Shape Language (Srikar, Alex)
+-- Exercise 2. Shape Language (Srikar, Lance, Alex)
 
 data Shape = X 
            | TD Shape Shape
@@ -69,38 +65,26 @@ data Shape = X
 
 type BBox = (Int,Int)
 
-type Pixel = (Int,Int)
-type Image = [Pixel]
-
-sem :: Shape -> Image 
-
-sem X = [(1,1)]
-
-sem (LR s1 s2) = d1 ++ [(x+maxx d1,y) | (x,y) <- sem s2]                  
-where d1 = sem s1
-
-sem (TD s1 s2) = d2 ++ [(x,y+maxy d2) | (x,y) <- sem s1]                  
-where d2 = sem s2
-
-maxx :: [Pixel] -> Int
-maxx = maximum . map fst
-
-maxy :: [Pixel] -> Int
-maxy = maximum . map snd
-
 bbox :: Shape -> BBox
 bbox X = (1,1)
-bbox a = maximum(sem(a)) 
+bbox (TD a b) | x1 >= x2 = (x1, y1 + y2)
+              | otherwise = (x2, y1 + y2) 
+              where (x1, y1) = bbox a
+                    (x2, y2) = bbox b
 
-
-maximum :: Image -> BBox
-maximum [] a b = (a, b)
-maximum ((x,y):xs) a b = maximum xs c d
-                         where c = if x > a then x else a
-                               d = if y > b then y else b
-
+bbox (LR a b) | y1 >= y2 = (x1 + x2, y1)
+              | otherwise = (x1 + x2, y2) 
+              where (x1, y1) = bbox a
+                    (x2, y2) = bbox b
 
 rect :: Shape -> Maybe BBox
 rect X = Just (1,1)
-rect (LR s1 s2) = if (snd bbox(s1)) == (snd bbox(s2)) then (((fst bbox(s1)) + (fst bbox(s2))), (snd bbox(s1)))
-rect (TD s1 s2) = if (fst bbox(s1)) == (fst bbox(s2)) then ((fst bbox(s1)), ((snd bbox(s1)) + (snd bbox(s2))))
+rect (TD a b) | rect a /= Nothing && rect b /= Nothing && x1 == x2 = Just (x1, y1 + y2)
+              | otherwise = Nothing
+              where (x1, y1) = bbox a
+                    (x2, y2) = bbox b
+
+rect (LR a b) | rect a /= Nothing && rect b /= Nothing && y1 == y2 = Just (x1 + x2, y1)
+              | otherwise = Nothing
+              where (x1, y1) = bbox a
+                    (x2, y2) = bbox b            
