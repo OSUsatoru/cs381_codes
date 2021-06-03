@@ -27,7 +27,7 @@ usage(P, T) :- where(X, P), when(X, T).
 conflict(X, Y) :- where(X, R), where(Y, R), when(X, T), when(Y, T), X \= Y.
 
 meet(X, Y) :- enroll(X, C), enroll(Y, C), X \= Y.
-meet(X, Y) :- enroll(X, C1), enroll(Y, C2), X \= Y,
+meet(X, Y) :- enroll(X, C1), enroll(Y, C2), X \= Y, C1 \= C2,
               where(C1, R), where(C2, R),
               when(C1, T1), when(C2, T2), T2 =:= T1+1.
 
@@ -40,13 +40,27 @@ member(X,[_|Y]) :- member(X,Y).
 append([], L, L).
 append([X|L1], L2, [X|L3]) :- append(L1, L2, L3).
 
-rdup([], []).
+rdup([],[]).
+/* if member(X,L) is true, rdup(L,M) and never go back to member(X,L)*/
 rdup([X|L], M) :- member(X, L), !, rdup(L, M).
+/* if member(X,L) is false */
 rdup([X|L], [X|M]) :- rdup(L, M).
 
-flat([], []).
-flat([X|Xs], Y) :- flat(X, Y2), flat(Xs, Y3), append(Y2, Y3, Y).
-flat(X, [X]).
 
-project(_, [], []).
-project([], _, []).
+flat([], []).
+/* Y2 is elements of head, Y3 is elements of tail. no need to repeat */
+flat([X|Xs], Y) :- flat(X, Y2), flat(Xs, Y3), append(Y2, Y3, Y), !.
+/* if head is not list, make it to list for append */
+flat(X,[X]).
+
+
+
+project([],_,[]).
+/* L1 is project of num, L2 is project of list of num, no need to repeat */
+project([N|Ns],X,L) :- project(N,X,L1), project(Ns,X,L2), append(L1,L2,L),!.
+
+/* for non list fst element  */
+/* do not wanna repeat project(N,[_|Xs],L) */
+project(1,[X|_],[X]):-!.
+project(N,[_|Xs],L) :- N > 1, N1 is N-1, project(N1,Xs,L).
+
