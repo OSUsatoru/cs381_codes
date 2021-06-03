@@ -54,13 +54,20 @@ flat([X|Xs], Y) :- flat(X, Y2), flat(Xs, Y3), append(Y2, Y3, Y), !.
 flat(X,[X]).
 
 
-
+/*
 project([],_,[]).
-/* L1 is project of num, L2 is project of list of num, no need to repeat */
+ L1 is project of num, L2 is project of list of num, no need to repeat
 project([N|Ns],X,L) :- project(N,X,L1), project(Ns,X,L2), append(L1,L2,L),!.
 
-/* for non list fst element  */
-/* do not wanna repeat project(N,[_|Xs],L) */
+ for non list fst element
+ do not wanna repeat project(N,[_|Xs],L)
 project(1,[X|_],[X]):-!.
 project(N,[_|Xs],L) :- N > 1, N1 is N-1, project(N1,Xs,L).
+*/
 
+project(_,[],[]) :- !.
+project([X|Xs], [Y|Ys], L) :- X = 1, append([Y], L2, L), !, decrement(Xs,Xs2), project(Xs2, Ys, L2).
+project(X, [_|Ys], L) :- decrement(X, X2), project(X2, Ys, L).
+
+decrement([],[]).
+decrement([X|Xs], [Y|Ys]) :- Y is X-1, decrement(Xs, Ys).
